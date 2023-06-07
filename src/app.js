@@ -3,7 +3,7 @@ const cors = require("cors");
 
 const { dbConnect } = require("./database/config");
 
-const productRouter = require("./routes/productRoutes");
+const hourRouter = require("./routes/hourRoutes");
 const userRouter = require("./routes/userRoutes");
 
 // Configuración del servidor Express
@@ -17,7 +17,7 @@ app.use(express.json());
 app.use("/api/v1/users", userRouter);
 
 // Rutas protegidas que requieren autenticación
-app.use("/api/v1/products", productRouter);
+app.use("/api/v1/hours", hourRouter);
 
 // Middleware de error para manejar accesos no autorizados
 app.use((err, req, res, next) => {
@@ -31,9 +31,8 @@ app.use((err, req, res, next) => {
 // Conexión a la base de datos
 dbConnect();
 
-// Puerto de escucha del servidor
-const port = 3000;
-app.listen(port, () => {
+// Puerto de escucha del servidor// Listen on `port` and 0.0.0.0
+const port = process.env.PORT || 3000;
+app.listen(port, "0.0.0.0", () => {
   console.log(`Servidor en ejecución en el puerto ${port}`);
 });
-

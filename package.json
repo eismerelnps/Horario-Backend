@@ -4,8 +4,8 @@
   "description": "",
   "main": "./src/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./src/app.js"
+    "start": "node ./src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Eismer Lobaina",
   "license": "ISC",
@@ -17,13 +17,6 @@
     "express-validator": "^7.0.1",
     "firebase": "^9.22.1",
     "jsonwebtoken": "^9.0.0",
-<<<<<<< HEAD
-    "mongoose": "^7.1.1",
-    "nodemon": "^2.0.22"
-=======
-    "lodash": "^4.17.21",
-    "mongoose": "^7.1.1",
-    "xlsx": "^0.18.5"
->>>>>>> 3f549f17511db64301319ddf564e38f03b28ba43
+    "mongoose": "^7.1.1"
   }
 }
