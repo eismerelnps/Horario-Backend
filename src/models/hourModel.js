@@ -3,24 +3,22 @@ const mongoose = require('mongoose');
 const hourSchema = new mongoose.Schema({
   time: {
     type: String,
-    required: [true, 'El nombre del producto es obligatorio'],
   },
   classAbr: {
     type: String,
-    required: [true, 'El modelo del producto es obligatorio'],
   },
   classRoom: {
     type: String,
-    required: [true, 'La categoría del producto es obligatoria'],
+    required: [true, 'El aula de la clase es obligatoria'],
   },
   classType: {
     type: String,
-    required: [true, 'La moneda del producto es obligatoria'],
+    required: [true, 'El tipo de clase es obligatoria'],
   },
 
   className: {
     type: Number,
-    required: [true, 'El precio del producto es obligatorio'],
+    required: [true, 'El nombre de la clase es obligatoria'],
   },
   teacher: {
     type: Number,

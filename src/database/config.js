@@ -2,9 +2,10 @@
 
 require('dotenv').config();
 const mongoose = require('mongoose');
+const logger = require('../logs/logger');
 
 const dbHost = process.env.DB_HOST;
-console.log(dbHost); // Imprime 'localhost'
+//console.log(dbHost); 
 
 const dbConnect = () => {
   mongoose.connect(dbHost, {
@@ -12,10 +13,10 @@ const dbConnect = () => {
     useUnifiedTopology: true,
   })
     .then(() => {
-      console.log('Conexión exitosa a la base de datos');
+      logger.info('Conexión exitosa a la base de datos');
     })
     .catch((error) => {
-      console.error('Error al conectar a la base de datos:', error);
+      logger.info('Error al conectar a la base de datos:', error);
     });
 };
 

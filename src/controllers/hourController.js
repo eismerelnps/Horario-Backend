@@ -1,4 +1,5 @@
 // controllers/productController.js
+const logger = require('../logs/logger');
 
 // Importa el modelo de horario
 const Hour = require('../models/hourModel');
@@ -15,8 +16,10 @@ exports.getAllHours = async (req, res) => {
   try {
     const hours = await Hour.find();
     res.status(200).json(hours);
+    logger.info('Todos los horarios obtenidos')
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener los horarios', error });
+    logger.error('Error al obtener los horarios')
   }
 };
 
