@@ -29,22 +29,13 @@ exports.createUser = async (req, res) => {
 
     // Guarda el usuario en la base de datos
     await newUser.save();
-
-    // Contenedor de la respusta al usuario con el token de autenticación
-    const user = {
-      id: newUser._id,
-      usename: newUser.username,
-      email: newUser.email,
-      role: newUser.role,
-      faculty: newUser.faculty,
-      group: newUser.group,
-      year: newUser.year,
-      token: ''
-    };
-
+    
     // Generar el token JWT
-    user.token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: newUser._id, email: newUser.email }, process.env.JWT_SECRET, { expiresIn: '1 month' });
 
+    const user = Object.assign({ token }, newUser);
+    delete user.password;
+                               
     // Envía una respuesta con el usuario creado
     res.status(201).json({ message: 'Usuario creado exitosamente', user });
   } catch (error) {
@@ -70,20 +61,11 @@ exports.login = async (req, res) => {
         return res.status(401).json({ message: 'Contraseña incorrecta' });
       }
 
-      // Contenedor de la respusta al usuario con el token de autenticación
-      const user = {
-        id: findUser._id,
-        usename: findUser.username,
-        email: findUser.email,
-        role: findUser.role,
-        faculty: findUser.faculty,
-        group: findUser.group,
-        year: findUser.year,
-        token: ''
-     };
-
       // Generar el token JWT
-      user.token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const token = jwt.sign({ id: findUser._id, email: findUser.email }, process.env.JWT_SECRET, { expiresIn: '1 month' });
+
+      const user = Object.assign({ token }, findUser);
+      delete user.password;
 
       // Enviar los datos en la respuesta
       res.status(200).json({ message: 'Usuario autenticado correctamente', user });
