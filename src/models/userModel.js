@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: false, // Campo opcional
+    required: [true, "El email es obligatorio"],
   },
   role: {
     type: String,
