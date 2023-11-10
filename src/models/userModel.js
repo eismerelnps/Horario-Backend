@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, "El email es obligatorio"],
+    unique: true, // El nombre de usuario debe ser único
   },
   role: {
     type: String,
