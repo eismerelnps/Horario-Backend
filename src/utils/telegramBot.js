@@ -1,8 +1,10 @@
 const TelegramBot = require('node-telegram-bot-api');
 const logger = require('../logs/logger'); // Importa el logger
 
+const tlChatId = process.env.TL_CHAT_ID
+const tlToken = process.env.TL_TOKEN
 
-const bot = new TelegramBot('6390735438:AAGJ1P-y4_eKhvhYCN5vTtW9ngclT1YD9fQ', { polling: true });
+const bot = new TelegramBot(tlToken, { polling: true });
 
 
 bot.on('message', (msg) => {
@@ -15,7 +17,7 @@ bot.on('message', (msg) => {
   }
 
   // send a message to the chat acknowledging receipt of their message
-  sendTelegramMessage(`mensaje de ${msg.from.username} ::: ${msg.text} ::: ${msg.chat.id} `);
+  sendTelegramMessage(tlChatId, `mensaje de ${msg.from.username} ::: ${msg.text} ::: ${msg.chat.id} `);
 });
 
 bot.onText(/\/start/, (msg) => {
@@ -29,11 +31,10 @@ bot.onText(/\/start/, (msg) => {
     });
 
 // Función para enviar un mensaje al grupo
-function sendTelegramMessage(message) {
-  //bot.sendMessage('-1002026078732', message)//test
-  bot.sendMessage('996858215', message)
-  //bot.sendMessage('1130881018', message)//nae
-  //bot.sendMessage('-1002081177116/64', message)//project
+function sendTelegramMessage(chatId, message) {
+ 
+  bot.sendMessage(chatId, message)
+ 
     .then(() => {
      //logger.info(`Mensaje enviado a Telegram: ${message}`);
     })
