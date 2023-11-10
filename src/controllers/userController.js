@@ -32,7 +32,7 @@ exports.createUser = async (req, res) => {
 
     // Contenedor de la respusta al usuario con el token de autenticación
     const user = {
-      _id: newUser._id,
+      id: newUser._id,
       usename: newUser.username,
       email: newUser.email,
       role: newUser.role,
