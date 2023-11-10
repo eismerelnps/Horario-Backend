@@ -8,6 +8,9 @@ const tlChatId = process.env.TL_CHAT_ID
 const tlToken = process.env.TL_TOKEN
 
 
+
+
+
 const logger = winston.createLogger({
   level: "info",
   format: winston.format.combine(
@@ -20,11 +23,11 @@ const logger = winston.createLogger({
   //useUnifiedTopology: true,
   transports: [
     new winston.transports.Console(),
-    new winston.transports.MongoDB({
-      db: "mongodb+srv://eismerlobaina:ZSPHBORwsvsUjeXg@learnmongodb.gopsm4k.mongodb.net/horarioDB",
-      collection: "log",
-//useUnifiedTopology: true
-    }),
+//     new winston.transports.MongoDB({
+//       db: "mongodb+srv://eismerlobaina:ZSPHBORwsvsUjeXg@learnmongodb.gopsm4k.mongodb.net/horarioDB",
+//       collection: "log",
+// //useUnifiedTopology: true
+//     }),
     new TelegramLogger({
       token: tlToken,
       chatId: tlChatId,
@@ -35,5 +38,11 @@ const logger = winston.createLogger({
     // })
   ],
 });
+
+
+
+
+
+
 
 module.exports = logger;
