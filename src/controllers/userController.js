@@ -31,7 +31,7 @@ exports.createUser = async (req, res) => {
     await newUser.save();
     
     // Generar el token JWT
-    const token = jwt.sign({ id: newUser._id, email: newUser.email }, process.env.JWT_SECRET, { expiresIn: '1 month' });
+    const token = jwt.sign({ id: newUser._id, email: newUser.email }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
     const user = Object.assign({ token }, newUser);
     delete user.password;
@@ -62,7 +62,7 @@ exports.login = async (req, res) => {
       }
 
       // Generar el token JWT
-      const token = jwt.sign({ id: findUser._id, email: findUser.email }, process.env.JWT_SECRET, { expiresIn: '1 month' });
+      const token = jwt.sign({ id: findUser._id, email: findUser.email }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
       const user = Object.assign({ token }, findUser);
       delete user.password;
