@@ -3,6 +3,7 @@ const logger = require('../logs/logger'); // Importa el logger
 
 const tlChatId = process.env.TL_CHAT_ID
 const tlToken = process.env.TL_TOKEN
+const ENVIROMENT = process.env.ENVIROMENT
 
 const bot = new TelegramBot(tlToken, { polling: true });
 
@@ -33,7 +34,7 @@ bot.onText(/\/start/, (msg) => {
 // Función para enviar un mensaje al grupo
 function sendTelegramMessage(chatId, message) {
  
-  bot.sendMessage(chatId, message)
+  bot.sendMessage(chatId, `[${ENVIROMENT}] ${message}`)
  
     .then(() => {
      //logger.info(`Mensaje enviado a Telegram: ${message}`);
@@ -43,9 +44,5 @@ function sendTelegramMessage(chatId, message) {
     });
 }
 
-//module.exports = sendTelegramMessage;
-for (let i = 0; i < 1000; i++) {
-  setTimeout(() => {
-    sendTelegramMessage(` ${i}`);
-  }, 1000 * i);
-}
+
+module.exports = sendTelegramMessage;

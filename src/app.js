@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 //const morgan = require('morgan');
 const logger = require('./logs/logger'); // Importa el logger
+const sendTelegramMessage = require('./utils/telegramBot'); // Importa el logger del bot de telegram
 
 const winston = require('winston');
 const consoleTransport = new winston.transports.Console();
@@ -11,6 +12,9 @@ const { dbConnect } = require("./database/config");
 
 const hourRouter = require("./routes/hourRoutes");
 const userRouter = require("./routes/userRoutes");
+
+
+const tlChatId = process.env.TL_CHAT_ID
 
 // Configuración del servidor Express
 const app = express();
@@ -48,5 +52,5 @@ dbConnect();
 const port = process.env.PORT || 9000;
 app.listen(port, "0.0.0.0", () => {
   logger.info(`Servidor en ejecución en el puerto ${port}`);
-
+  sendTelegramMessage(tlChatId,`Servidor en ejecución en el puerto ${port}`)
 });
