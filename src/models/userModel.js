@@ -18,6 +18,18 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     default: 'user',
+  },
+  faculty: {
+    type: String,
+    required: [true, "La facultad es obligatoria"],
+  },
+  year: {
+    type: Integer,
+    required: [true, "El año es obligatorio"],
+  },
+  group: {
+    type: Integer,
+    required: [true, "El grupo es obligatorio"],
   }
 });
 
