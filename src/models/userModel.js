@@ -21,15 +21,15 @@ const userSchema = new mongoose.Schema({
   },
   faculty: {
     type: String,
-    required: [true, "La facultad es obligatoria"],
+    default: '',
   },
   year: {
     type: Integer,
-    required: [true, "El año es obligatorio"],
+    default: 0,
   },
   group: {
     type: Integer,
-    required: [true, "El grupo es obligatorio"],
+    default: 0,
   }
 });
 
