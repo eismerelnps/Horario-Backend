@@ -13,7 +13,7 @@ require('dotenv').config();
 // Controlador para autenticar un usuario
 exports.createUser = async (req, res) => {
   try {
-    const { username, password, email } = req.body;
+    const { username, password, email, faculty, year, group } = req.body;
 
     // Verifica si el usuario ya existe
     const existingUser = await User.findOne({ username });
@@ -25,7 +25,7 @@ exports.createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Crea una nueva instancia del modelo User con los datos del usuario
-    const newUser = new User({ username, password: hashedPassword, email });
+    const newUser = new User({ username, password: hashedPassword, email, faculty, year, group });
 
     // Guarda el usuario en la base de datos
     await newUser.save();
