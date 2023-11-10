@@ -30,13 +30,21 @@ exports.createUser = async (req, res) => {
     // Guarda el usuario en la base de datos
     await newUser.save();
     
-    // Generar el token JWT
-    const token = jwt.sign({ id: newUser._id, email: newUser.email }, process.env.JWT_SECRET, { expiresIn: '30d' });
+    // Crear contenedor con los datos que seran enviados
+    const user = {
+      id: newUser._id.toString(),
+      username: newUser.username,
+      email: newUser.email,
+      faculty: newUser.faculty,
+      group: newUser.group,
+      year: newUser.year,
+      token: '',
+    };
 
-    const user = Object.assign({ token }, newUser);
-    delete user.password;
+    // Generar el token JWT
+    user.token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '30d' });
                                
-    // Envía una respuesta con el usuario creado
+    // Enviar los datos en la respuesta
     res.status(201).json({ message: 'Usuario creado exitosamente', user });
   } catch (error) {
     res.status(500).json({ message: 'Error al crear el usuario', error });
@@ -61,11 +69,19 @@ exports.login = async (req, res) => {
         return res.status(401).json({ message: 'Contraseña incorrecta' });
       }
 
-      // Generar el token JWT
-      const token = jwt.sign({ id: findUser._id, email: findUser.email }, process.env.JWT_SECRET, { expiresIn: '30d' });
+      // Crear contenedor con los datos que seran enviados
+      const user = {
+        id: findUser._id.toString(),
+        username: findUser.username,
+        email: findUser.email,
+        faculty: findUser.faculty,
+        group: findUser.group,
+        year: findUser.year,
+        token: '',
+      };
 
-      const user = Object.assign({ token }, findUser);
-      delete user.password;
+      // Generar el token JWT
+      user.token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
       // Enviar los datos en la respuesta
       res.status(200).json({ message: 'Usuario autenticado correctamente', user });
