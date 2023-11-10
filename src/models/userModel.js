@@ -13,11 +13,24 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: false, // Campo opcional
+    required: [true, "El email es obligatorio"],
+    unique: true, // El email debe ser único
   },
   role: {
     type: String,
     default: 'user',
+  },
+  faculty: {
+    type: String,
+    default: '',
+  },
+  year: {
+    type: Integer,
+    default: 0,
+  },
+  group: {
+    type: Integer,
+    default: 0,
   }
 });
 

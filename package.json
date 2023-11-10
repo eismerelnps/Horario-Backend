@@ -5,12 +5,13 @@
   "main": "./src/app.js",
   "scripts": {
     "start": "node ./src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon .",
+    "lint": "eslint . --ext js,jsx,ts,tsx --max-warnings 0"
   },
   "author": "Eismer Lobaina",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.1.0",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
@@ -24,5 +25,9 @@
     "winston-mail": "^2.0.0",
     "winston-mongodb": "^5.1.1",
     "winston-telegram": "^2.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0",
+    "eslint": "^8.45.0"
   }
 }
