@@ -30,8 +30,23 @@ exports.createUser = async (req, res) => {
     // Guarda el usuario en la base de datos
     await newUser.save();
 
+    // Contenedor de la respusta al usuario con el token de autenticación
+    const user = {
+      _id: newUser._id,
+      usename: newUser.username,
+      email: newUser.email,
+      role: newUser.role,
+      faculty: newUser.faculty,
+      group: newUser.group,
+      year: newUser.year,
+      token: ''
+    };
+
+    // Generar el token JWT
+    user.token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
     // Envía una respuesta con el usuario creado
-    res.status(201).json({ message: 'Usuario creado exitosamente', user: newUser });
+    res.status(201).json({ message: 'Usuario creado exitosamente', user });
   } catch (error) {
     res.status(500).json({ message: 'Error al crear el usuario', error });
   }
