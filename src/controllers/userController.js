@@ -86,7 +86,7 @@ exports.login = async (req, res) => {
       user.token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
       // Enviar los datos en la respuesta
-      res.status(200).json(user);
+      res.status(200).json({ message: 'Usuario autenticado correctamente', user });
     } catch (error) {
       res.status(500).json({ message: 'Error al autenticar el usuario', error });
     }
