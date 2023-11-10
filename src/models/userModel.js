@@ -25,11 +25,11 @@ const userSchema = new mongoose.Schema({
     default: '',
   },
   year: {
-    type: Integer,
+    type: Number,
     default: 0,
   },
   group: {
-    type: Integer,
+    type: Number,
     default: 0,
   }
 });
