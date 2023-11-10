@@ -13,7 +13,7 @@ require('dotenv').config();
 // Controlador para autenticar un usuario
 exports.createUser = async (req, res) => {
   try {
-    const { username, password, email, faculty, year, group } = req.body;
+    const { username, password, email } = req.body;
 
     // Verifica si el usuario ya existe
     const existingUser = await User.findOne({ username });
@@ -25,7 +25,7 @@ exports.createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Crea una nueva instancia del modelo User con los datos del usuario
-    const newUser = new User({ username, password: hashedPassword, email, faculty, year, group });
+    const newUser = new User({ username, password: hashedPassword, email });
 
     // Guarda el usuario en la base de datos
     await newUser.save();
@@ -43,7 +43,7 @@ exports.createUser = async (req, res) => {
     };
 
     // Generar el token JWT
-    user.token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    user.token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     // Envía una respuesta con el usuario creado
     res.status(201).json({ message: 'Usuario creado exitosamente', user });
@@ -56,25 +56,37 @@ exports.createUser = async (req, res) => {
 // Función para verificar las credenciales del usuario y generar un token JWT
 exports.login = async (req, res) => {
     try {
-      const { username, password,  } = req.body;
+      const { username, password } = req.body;
   
       // Buscar al usuario en la base de datos
-      const user = await User.findOne({ username });
-      if (!user) {
+      const findUser = await User.findOne({ username });
+      if (!findUser) {
         return res.status(401).json({ message: 'Usuario no encontrado' });
       }
   
       // Verificar la contraseña
-      const passwordMatch = await bcrypt.compare(password, user.password);
+      const passwordMatch = await bcrypt.compare(password, findUser.password);
       if (!passwordMatch) {
         return res.status(401).json({ message: 'Contraseña incorrecta' });
       }
-  
+
+      // Contenedor de la respusta al usuario con el token de autenticación
+      const user = {
+        id: findUser._id,
+        usename: findUser.username,
+        email: findUser.email,
+        role: findUser.role,
+        faculty: findUser.faculty,
+        group: findUser.group,
+        year: findUser.year,
+        token: ''
+     };
+
       // Generar el token JWT
-      const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
-  
-      // Enviar el token en la respuesta
-      res.status(200).json({ token });
+      user.token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+      // Enviar los datos en la respuesta
+      res.status(200).json(user);
     } catch (error) {
       res.status(500).json({ message: 'Error al autenticar el usuario', error });
     }
