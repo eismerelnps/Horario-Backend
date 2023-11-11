@@ -11,4 +11,7 @@ router.post('/create-user', userController.createUser);
 // Ruta para autenticacion de un usuario
 router.post('/login', userController.login);
 
+// Ruta para actualizar los datos de un usuario
+router.post('/update-user', userController.update);
+
 module.exports = router;
