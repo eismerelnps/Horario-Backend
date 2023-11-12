@@ -44,7 +44,6 @@ const assignatureSchema = new mongoose.Schema({
    id: Number, // Identificador de la asignatura, usado como referencia
    name: String, // nombre de la asignatura
    abbr: Number, // abreviatura de la asignatura
-   type: String, // tipo de materia de la asignatura
 });
 
 const teacherSchema = new mongoose.Schema({
