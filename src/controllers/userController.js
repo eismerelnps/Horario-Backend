@@ -266,7 +266,7 @@ exports.adminUsers = async(req, res) => {
     //const { password } = req.body;
 
     // Guarda la lista de los usuarios de la base de datos 
-    const users = User.find();
+    const users = await User.find();
 
     // Comprueba que los datos se hayan recibido correctamente
     if(!users) {
