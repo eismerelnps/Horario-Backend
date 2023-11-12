@@ -267,7 +267,8 @@ async function updateUser(req, res) {
     if (faculty && faculty != findUser.faculty) data.faculty = faculty;
     if (group && group != findUser.group) data.group = group;
     if (year && year != findUser.year) data.year = year;
-
+    if(req.user.targetId && role && role.trim() !== '' && role != findUser.role) data.role = role;
+    
     if(data.password) {
       if(data.password.length === 0) {
         delete data.password;
@@ -322,10 +323,7 @@ async function updateUser(req, res) {
     // Actualizar los datos en la base de datos
     let updateUser = null;
 
-    if(req.user.targetId) {
-      if (role && role.trim() !== '' && role != findUser.role) data.role = role;
-      updateUser = await User.updateMany({ _id: new ObjectId(req.user.targetId) }, { $set: data });
-    }
+    if(req.user.targetId) updateUser = await User.updateMany({ _id: new ObjectId(req.user.targetId) }, { $set: data });
     else updateUser = await User.updateMany({ _id: new ObjectId(req.user.id) }, { $set: data });
 
     // Si no hay ningun cambio en los datos en la base de datos envia un error
