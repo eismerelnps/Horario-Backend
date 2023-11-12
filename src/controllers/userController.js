@@ -94,7 +94,7 @@ exports.login = async (req, res) => {
 };
 
 exports.check = async (req, res) => {
-  res.status(200).json({ message: 'Usuario autenticado correctamente', user });
+  res.status(200).json({ message: 'Usuario autenticado correctamente' });
 };
 
 exports.update = async (req, res) => {
@@ -225,7 +225,7 @@ exports.delete = async (req, res) => {
   try {
     const { password } = req.body;
 
-    if (!req.user || !req.user.id {
+    if (!req.user || !req.user.id) {
       return res.status(401).json({ message: 'Acceso no autorizado' });
     }
   
