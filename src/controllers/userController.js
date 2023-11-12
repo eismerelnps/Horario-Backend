@@ -267,7 +267,23 @@ exports.delete = async (req, res) => {
 
 exports.adminUsers = async(req, res) => {
   try {
-    //const { password } = req.body;
+    const { password } = req.body;
+    
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: 'Acceso no autorizado' });
+    }
+  
+    let findUser = await User.findById(req.user.id);
+    
+    if (!findUser) {
+      return res.status(401).json({ message: 'usuario o contraseña incorrectos' });
+    }
+  
+    // Verificar la contraseña
+    const passwordMatch = await bcrypt.compare(password, findUser.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ message: 'usuario o contraseña incorrectos' });
+    }
 
     // Guarda la lista de los usuarios de la base de datos 
     const users = await User.find();
