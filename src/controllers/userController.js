@@ -208,11 +208,12 @@ exports.update = async (req, res) => {
       faculty: findUser.faculty,
       group: findUser.group,
       year: findUser.year,
+      role: findUser.role,
       token: '',
     };
      
     // Generar el token JWT
-    user.token = jwt.sign({ id: req.user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '30d' });
+    user.token = jwt.sign({ id: req.user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
     // Enviar los datos en la respuesta
     res.status(200).json({ message: 'Usuario actualizado correctamente', user });
