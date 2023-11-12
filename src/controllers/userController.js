@@ -134,12 +134,16 @@ exports.update = async (req, res) => {
       if(data.password.length === 0) {
         delete data.password;
       }
-      if(data.password.length < 7) {
+      else if(data.password.length < 7) {
         throw {
           name: 'InvalidNewPasswordError',
           text: 'contraseña muy corta',
           data: data,
         };
+      }
+      else {
+        //Generar el hash de la contraseña
+        data.password = await bcrypt.hash(data.password, 10);
       }
     }
     
