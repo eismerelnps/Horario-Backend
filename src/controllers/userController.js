@@ -239,7 +239,7 @@ async function getUsers(req, res) {
 // Función para actualizar un usuario 
 async function updateUser(req, res) {
   try {
-    const { username, password, new_password, email, faculty, group, year } = req.body;
+    const { username, password, new_password, email, faculty, group, year, role } = req.body;
    
     if (!req.user || !req.user.id) {
       return res.status(401).json({ message: 'Acceso no autorizado' });
@@ -280,7 +280,7 @@ async function updateUser(req, res) {
         };
       }
       else {
-        //Generar el hash de la contraseña
+        // Generar el hash de la contraseña
         data.password = await bcrypt.hash(data.password, 10);
       }
     }
@@ -322,7 +322,10 @@ async function updateUser(req, res) {
     // Actualizar los datos en la base de datos
     let updateUser = null;
 
-    if(req.user.targetId) updateUser = await User.updateMany({ _id: new ObjectId(req.user.targetId) }, { $set: data });
+    if(req.user.targetId) {
+      if (role && role.trim() !== '' && role != findUser.role) data.role = role;
+      updateUser = await User.updateMany({ _id: new ObjectId(req.user.targetId) }, { $set: data });
+    }
     else updateUser = await User.updateMany({ _id: new ObjectId(req.user.id) }, { $set: data });
 
     // Si no hay ningun cambio en los datos en la base de datos envia un error
