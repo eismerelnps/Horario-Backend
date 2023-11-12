@@ -99,7 +99,145 @@ exports.check = async (req, res) => {
   res.status(200).json({ message: 'Usuario autenticado correctamente' });
 };
 
-exports.update = async (req, res) => {
+exports.update = async(req, res) => {
+  await updateUser(req, res);
+};
+
+exports.delete = async (req, res) => {
+  await deleteUser(req, res);
+}
+
+exports.adminUsers = async(req, res) => {
+  await getUsers(req, res);
+};
+
+exports.adminUser = async(req, res) => {
+  try {
+    const { targetId } = req.body;
+
+    const findUser = await User.findById(targetId);
+    
+    if (!findUser) {
+      throw {
+        name: 'InvalidIdError',
+        text: 'Id de usuario a actualizar incorrecto',
+        data: null
+      };
+    }
+    
+    // Guardar el id del usuario objetivo
+    req.user.targetId = targetId;
+
+    // Enviar datos a la función
+    await getUsers(req, res);
+
+  } catch(error) {
+    res.status(500).json({ message: 'Id de usuario a obtener incorrecto', error });
+  } 
+};
+
+exports.adminUpdate = async (req, res) => {
+  try {
+    const { targetId } = req.body;
+
+    const findUser = await User.findById(targetId);
+    
+    if (!findUser) {
+      throw {
+        name: 'InvalidIdError',
+        text: 'Id de usuario a actualizar incorrecto',
+        data: null
+      };
+    }
+
+    // Guardar el id del usuario objetivo
+    req.user.targetId = targetId;
+
+    // Enviar datos a la función
+    await updateUser(req, res);
+
+  } catch(error) {
+    res.status(500).json({ message: 'Id de usuario a actualizar incorrecto', error });
+  } 
+};
+
+exports.adminDelete = async (req, res) => {
+  try {
+    const { targetId } = req.body;
+
+    const findUser = await User.findById(targetId);
+    
+    if (!findUser) {
+      throw {
+        name: 'InvalidIdError',
+        text: 'Id de usuario a actualizar incorrecto',
+        data: null
+      };
+    }
+
+    // Guardar el id del usuario objetivo
+    req.user.targetId = targetId;
+
+    // Enviar datos a la función
+    await deleteUser(req, res);
+
+  } catch(error) {
+    res.status(500).json({ message: 'Id de usuario a actualizar incorrecto', error });
+  }
+};
+
+
+
+/**  FUNCIONES MULTIUSOS  **/
+
+// Función para obtener los datos de uno o todos los usuarios
+async function getUsers(req, res) {
+  try {
+    const { password } = req.body;
+    
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: 'Acceso no autorizado' });
+    }
+  
+    let findUser = await User.findById(req.user.id);
+    
+    if (!findUser) {
+      return res.status(401).json({ message: 'usuario o contraseña incorrectos' });
+    }
+  
+    // Verificar la contraseña
+    const passwordMatch = await bcrypt.compare(password, findUser.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ message: 'usuario o contraseña incorrectos' });
+    }
+
+    if(req.user.targetId) {
+      // Guarda los datos del usuario en el id objetivo
+      result = await User.findById(req.user.targetId);
+    }
+    else {
+      // Guarda la lista de datos de los usuarios
+      result = await User.find();
+    }
+
+    // Comprueba que los datos se hayan recibido correctamente
+    if(!result) {
+      throw {
+        name: 'UsersGetError',
+        text: 'Error al obtener los datos de los usuarios',
+        data: result
+      };
+    }
+
+    // Retorna los datos de los usuarios 
+    res.status(200).json({ message: 'Datos obtenidos correctamente', result});
+  } catch (error) {
+    res.status(500).json({ message: 'Error al listar los datos', error });
+  }
+}
+
+// Función para actualizar un usuario 
+async function updateUser(req, res) {
   try {
     const { username, password, new_password, email, faculty, group, year } = req.body;
    
@@ -116,7 +254,7 @@ exports.update = async (req, res) => {
     // Verificar la contraseña
     let passwordMatch = await bcrypt.compare(password, findUser.password);
     if (!passwordMatch) {
-      return res.status(401).json({ message: 'contraseña antigua incorrecta' });
+      return res.status(401).json({ message: 'contraseña incorrecta' });
     }
 
     // Crea variable vacia para guardar los datos a ser actualizados
@@ -182,7 +320,10 @@ exports.update = async (req, res) => {
     }
 
     // Actualizar los datos en la base de datos
-    const updateUser = await User.updateMany({ _id: new ObjectId(req.user.id) }, { $set: data });
+    let updateUser = null;
+
+    if(req.user.targetId) updateUser = await User.updateMany({ _id: new ObjectId(req.user.targetId) }, { $set: data });
+    else updateUser = await User.updateMany({ _id: new ObjectId(req.user.id) }, { $set: data });
 
     // Si no hay ningun cambio en los datos en la base de datos envia un error
     if(updateUser.nModified === 0) {
@@ -194,7 +335,8 @@ exports.update = async (req, res) => {
     }
 
     // Obtiene el elemento de nuevo (ya actualizado)
-    findUser = await User.findById(req.user.id);
+    if(req.user.targetId) findUser = await User.findById(req.user.targetId);
+    else findUser = await User.findById(req.user.id);
 
     // Pruueba que exista
     if (!findUser) {
@@ -228,7 +370,7 @@ exports.update = async (req, res) => {
 };
 
 // Función para eliminar a un usuario
-exports.delete = async (req, res) => {
+async function deleteUser(req, res) {
   try {
     const { password } = req.body;
 
@@ -248,8 +390,12 @@ exports.delete = async (req, res) => {
       return res.status(401).json({ message: 'usuario o contraseña incorrectos' });
     }
 
-    const deleteUser = await User.findByIdAndDelete(req.user.id);
-      
+    // Eliminar usuario
+    let deleteUser = null;
+
+    if(req.user.targetId) deleteUser = await User.findByIdAndDelete(req.user.targetId);
+    else deleteUser = await User.findByIdAndDelete(req.user.id);
+    
     if(!deleteUser) {
       throw {
         name: 'ErrorUserDelete',
@@ -265,41 +411,4 @@ exports.delete = async (req, res) => {
   }
 };
 
-exports.adminUsers = async(req, res) => {
-  try {
-    const { password } = req.body;
-    
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({ message: 'Acceso no autorizado' });
-    }
-  
-    let findUser = await User.findById(req.user.id);
-    
-    if (!findUser) {
-      return res.status(401).json({ message: 'usuario o contraseña incorrectos' });
-    }
-  
-    // Verificar la contraseña
-    const passwordMatch = await bcrypt.compare(password, findUser.password);
-    if (!passwordMatch) {
-      return res.status(401).json({ message: 'usuario o contraseña incorrectos' });
-    }
 
-    // Guarda la lista de los usuarios de la base de datos 
-    const users = await User.find();
-
-    // Comprueba que los datos se hayan recibido correctamente
-    if(!users) {
-      throw {
-        name: 'UsersListError',
-        text: 'Error al obtener los datos de los usuarios',
-        data: users
-      }
-    }
-
-    // Retorna los datos de los usuarios 
-    res.status(200).json({ message: 'Datos obtenidos correctamente', users });
-  } catch (error) {
-    res.status(500).json({ message: 'Error al listar los usuarios', error });
-  }
-};
