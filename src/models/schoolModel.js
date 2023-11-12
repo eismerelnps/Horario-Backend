@@ -23,7 +23,7 @@ const weekSchema = new mongoose.Schema({
 const groupSchema = new mongoose.Schema({
    id: Number, // Identificador del grupo, usado como referencia
    name: String, // Nombre del grupo
-   hourModel: Number, // ID del modelo de horario (nivel semana) No se usa a menos q el usuario lo defina
+   hourModel: Number, // ID del modelo de horario (nivel grupo) No se usa a menos q el usuario lo defina
    schedule: [weekSchema], // Lista de  semanas
 });
 
