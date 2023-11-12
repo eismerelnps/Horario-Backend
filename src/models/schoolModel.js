@@ -5,6 +5,7 @@ const classSchema = new mongoose.Schema({
     assignature: Number, // ID correspondiente a la asignatura
     teacher: Number, // ID correspondiente al profesor
     room: String, // Nombre del aula o salon
+    type: Number, // ID referente al tipo de clase
 });
 
 const scheduleSchema = new mongoose.Schema({
@@ -13,11 +14,17 @@ const scheduleSchema = new mongoose.Schema({
   classes: [classSchema], // Lista de turnos, su ID representa el ID en hoursTurns
 });
 
+const weekSchema = new mongoose.Schema({
+  id: Number, // Identificador, representa la semana
+  hourModel: Number, // ID del modelo de horario (nivel semana) No se usa a menos q el usuario lo defina
+  days: [scheduleSchema], // Lista de dias de la semana
+});
+
 const groupSchema = new mongoose.Schema({
    id: Number, // Identificador del grupo, usado como referencia
    name: String, // Nombre del grupo
    hourModel: Number, // ID del modelo de horario (nivel semana) No se usa a menos q el usuario lo defina
-   schedule: [scheduleSchema], // Lista de dias de la semana
+   schedule: [weekSchema], // Lista de  semanas
 });
 
 const yearSchema = new mongoose.Schema({
@@ -68,19 +75,20 @@ const schoolSchema = new mongoose.Schema({
 
 // Si no hay un hourModel la app crea uno por defecto
 
-/*
+
 const Class = mongoose.model("Class", classSchema);
 const Schedule = mongoose.model("Schedule", scheduleSchema);
+const Week = mongoose.model("Week", weekSchema);
 const Group = mongoose.model("Group", groupSchema);
 const Year = mongoose.model("YearsSchema", yearSchema);
 const Faculty = mongoose.model("Faculty", facultySchema);
 
 const Assignature = mongoose.model("Assignature", assignatureSchema);
-const Teacher = mongoose.model("teacher", TeacherSchema);
-const Hour = mongoose.model("hour", HourSchema);
-const hourModel = mongoose.model("hourModel", hourModelSchema);
+const Teacher = mongoose.model("Teacher", TeacherSchema);
+const Hour = mongoose.model("Hour", HourSchema);
+const HourModel = mongoose.model("HourModel", hourModelSchema);
+
+const School = mongoose.model("School", schoolSchema);
 
 
-
-module.exports = { Faculty, Year, Group, Schedule, Class, Assignature, Teacher, Hour, hourModel };
-*/
+module.exports = { School, Faculty, Year, Group, Week, Schedule, Class, Assignature, Teacher, Hour, hourModel };
