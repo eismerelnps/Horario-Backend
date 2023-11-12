@@ -257,7 +257,7 @@ async function updateUser(req, res) {
       return res.status(401).json({ message: 'contraseña incorrecta' });
     }
 
-    // Si hay un objeto, Guarda los sobre el estado actual del usuario 
+    // Si hay un objeto, Guarda los datos del usuario 
     if(req.user.targetId) findUser = await User.findById(req.user.targetId);
     
     // Crea variable vacia para guardar los datos a ser actualizados
