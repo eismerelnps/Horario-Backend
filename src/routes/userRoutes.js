@@ -33,10 +33,10 @@ router.post('/check', middleware.authenticate, userController.check);
 
 /*  ADMINISTRADORES  */
 
-// Ruta para obtener la lista de usuarios
+// Ruta para obtener la lista de todos los usuarios
 //router.post('/admin/users', middleware.authenticate, middleware.checkPermissions("update"), userController.users);
 
-// Ruta para obtener la lista de usuarios
+// Ruta para actualizar datos de cualquier usuario
 //router.post('/admin/update', middleware.authenticate, middleware.checkPermissions("update"), userController.adminUpdate);
 
 // Ruta para eliminar un usuario
