@@ -39,11 +39,12 @@ exports.createUser = async (req, res) => {
       faculty: newUser.faculty,
       group: newUser.group,
       year: newUser.year,
+      role: newUser.role,
       token: '',
     };
 
     // Generar el token JWT
-    user.token = jwt.sign({ id: newUser._id.toString(), email: user.email }, process.env.JWT_SECRET, { expiresIn: '30d' });
+    user.token = jwt.sign({ id: newUser._id.toString(), email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '30d' });
     
     // Enviar los datos en la respuesta
     res.status(201).json({ message: 'Usuario creado exitosamente', user });
@@ -80,11 +81,12 @@ exports.login = async (req, res) => {
       faculty: findUser.faculty,
       group: findUser.group,
       year: findUser.year,
+      role: findUser.role,
       token: '',
     };
 
     // Generar el token JWT
-    user.token = jwt.sign({ id: findUser._id.toString(), email: user.email }, process.env.JWT_SECRET, { expiresIn: '30d' });
+    user.token = jwt.sign({ id: findUser._id.toString(), email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
     // Enviar los datos en la respuesta
     res.status(200).json({ message: 'Usuario autenticado correctamente', user });
@@ -255,5 +257,28 @@ exports.delete = async (req, res) => {
     res.status(200).json({ message: 'Usuario eliminado correctamente', deleted: true });
   } catch (error) {
     res.status(500).json({ message: 'Error al eliminar el usuario', error });
+  }
+};
+
+exports.adminUsers = async(req, res) => {
+  try {
+    //const { password } = req.body;
+
+    // Guarda la lista de los usuarios de la base de datos 
+    const users = User.find();
+
+    // Comprueba que los datos se hayan recibido correctamente
+    if(!users) {
+      throw {
+        name: 'UsersListError',
+        text: 'Error al obtener los datos de los usuarios',
+        data: users
+      }
+    }
+
+    // Retorna los datos de los usuarios 
+    res.status(200).json({ message: 'Datos obtenidos correctamente', users });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al listar los usuarios', error });
   }
 };
