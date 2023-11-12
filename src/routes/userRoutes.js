@@ -34,13 +34,13 @@ router.post('/check', middleware.authenticate, userController.check);
 /*  ADMINISTRADORES  */
 
 // Ruta para obtener la lista de todos los usuarios
-router.post('/admin/users', middleware.authenticate, middleware.checkPermissions("update"), userController.adminUsers);
+router.post('/admin/users', middleware.authenticate, middleware.checkPermissions(["update"]), userController.adminUsers);
 
 // Ruta para actualizar datos de cualquier usuario
-//router.update('/admin/update', middleware.authenticate, middleware.checkPermissions("update"), userController.adminUpdate);
+//router.update('/admin/update', middleware.authenticate, middleware.checkPermissions(["update"]), userController.adminUpdate);
 
 // Ruta para eliminar un usuario
-//router.delete('/admin/delete', middleware.authenticate, middleware.checkPermissions("delete"), userController.adminDelete);
+//router.delete('/admin/delete', middleware.authenticate, middleware.checkPermissions(["delete"]), userController.adminDelete);
 
 
 module.exports = router;
