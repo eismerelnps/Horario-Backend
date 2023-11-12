@@ -7,6 +7,8 @@ const middleware = require('../middleware/middleware');
 const router = express.Router();
 
 
+/*  PUBLICOS  */
+
 // Ruta para autenticacion de un usuario
 router.post('/login', userController.login);
 
@@ -14,14 +16,31 @@ router.post('/login', userController.login);
 router.post('/create-user', userController.createUser);
 
 
+/*  AUTENTICACIÓN  */
+
+// Ruta para actualizar los datos de un usuario
+router.put('/update', middleware.authenticate, userController.update);
+
+// Ruta para eliminar un usuario
+router.delete('/delete', middleware.authenticate, userController.delete);
+
+
+/*  PRUEBAS  */
+
 // Ruta para comprobar el estado del token del usuario
 router.post('/check', middleware.authenticate, userController.check);
 
-// Ruta para actualizar los datos de un usuario
-router.put('/update-user', middleware.authenticate, userController.update);
+
+/*  ADMINISTRADORES  */
+
+// Ruta para obtener la lista de usuarios
+//router.post('/admin/users', middleware.authenticate, middleware.checkPermissions("update"), userController.users);
+
+// Ruta para obtener la lista de usuarios
+//router.post('/admin/update', middleware.authenticate, middleware.checkPermissions("update"), userController.adminUpdate);
 
 // Ruta para eliminar un usuario
-router.delete('/delete-user', middleware.authenticate, userController.delete);
+//router.post('/admin/delete', middleware.authenticate, middleware.checkPermissions("delete"), userController.adminDelete);
 
 
 module.exports = router;
