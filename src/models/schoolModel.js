@@ -2,77 +2,75 @@ const mongoose = require("mongoose");
 
 
 const classSchema = new mongoose.Schema({
-    assignature: Number, // ID correspondiente a la asignatura
-    teacher: Number, // ID correspondiente al profesor
-    room: String, // Nombre del aula o salon
-    type: Number, // ID referente al tipo de clase
+    assignature: Number, 
+    teacher: Number,
+    room: String,
+    type: Number,
 });
 
 const scheduleSchema = new mongoose.Schema({
-  id: Number, // Identificador, representa el dia de la semana
-  hourModel: Number, // ID del modelo de horario (nivel dia) No se usa a menos q el usuario lo defina
-  classes: [classSchema], // Lista de turnos, su ID representa el ID en hoursTurns
+  id: Number,
+  hourModel: Number,
+  classes: [classSchema],
 });
 
 const weekSchema = new mongoose.Schema({
-  id: Number, // Identificador, representa la semana
-  hourModel: Number, // ID del modelo de horario (nivel semana) No se usa a menos q el usuario lo defina
-  days: [scheduleSchema], // Lista de dias de la semana
+  id: Number,
+  hourModel: Number,
+  days: [scheduleSchema],
 });
 
 const groupSchema = new mongoose.Schema({
-   id: Number, // Identificador del grupo, usado como referencia
-   name: String, // Nombre del grupo
-   hourModel: Number, // ID del modelo de horario (nivel grupo) No se usa a menos q el usuario lo defina
-   schedule: [weekSchema], // Lista de  semanas
+   id: Number, 
+   name: String,
+   hourModel: Number,
+   schedule: [weekSchema],
 });
 
 const yearSchema = new mongoose.Schema({
-   id: Number, // Numero referente al año
-   hourModel: Number, // ID del modelo de horario (nivel año) No se usa a menos q el usuario lo defina
-   groups: [groupSchema], // Lista de grupos
+   id: Number,
+   hourModel: Number,
+   groups: [groupSchema],
 });
 
 const facultySchema = new mongoose.Schema({
-   name: String, // Nombre de la facultad
-   code: Number, // Codigo referente a la facultad
-   hourModel: Number, // ID del modelo de horario (nivel facultad) No se usa a menos q el usuario lo defina
-   years: [yearsSchema], // Lista de años con sus datos
+   name: String,
+   code: Number,
+   hourModel: Number,
+   years: [yearsSchema],
 });
 
 const assignatureSchema = new mongoose.Schema({
-   id: Number, // Identificador de la asignatura, usado como referencia
-   name: String, // nombre de la asignatura
-   abbr: Number, // abreviatura de la asignatura
+   id: Number,
+   name: String, 
+   abbr: Number,
 });
 
 const teacherSchema = new mongoose.Schema({
-  id: Number, // Identificador al profesor, usado como referencia
-  name: String, // Nombre del profesor
-  default_assignatures: [Number], // Lista de IDs ds las asignaturas asignadas por el usuario
+  id: Number,
+  name: String,
+  default_assignatures: [Number],
 });
 
 const hourSchema = new mongoose.Schema({
-  id: Number, // Identificador del horario del turno, usado como referencia
-  from: String, // hora desde, inicio del turno
-  to: String, // hora hasta, fin del turno
+  id: Number,
+  from: String,
+  to: String,
 });
 
 const hourModelSchema = new mongoose.Schema({
-  id: Number, // Identificador del modelo de horarios de turnos, usado como referencia
-  hours: [hourSchema], // Lista de horarios de los turnos
+  id: Number,
+  hours: [hourSchema],
 });
 
 const schoolSchema = new mongoose.Schema({
-  name: String, // Nombre de la Escuela o Universidad
-  hourModel: Number, // ID del modelo de horario (nivel escuela) Usa por defecto el modelo 0 a no ser q lo cambien
-  faculties: [facultySchema], // Lista de facultades
-  assignatures: [assignatureSchema], // Lista de asignaturas
-  teachers: [teacherSchema], // Lista de profesores
-  hourModels: [hourModelSchema], // Lista de los modelos de horarios
+  name: String,
+  hourModel: Number,
+  faculties: [facultySchema],
+  assignatures: [assignatureSchema],
+  teachers: [teacherSchema],
+  hourModels: [hourModelSchema],
 });
-
-// Si no hay un hourModel la app crea uno por defecto
 
 
 const Class = mongoose.model("Class", classSchema);
@@ -91,3 +89,5 @@ const School = mongoose.model("School", schoolSchema);
 
 
 module.exports = { School, Faculty, Year, Group, Week, Schedule, Class, Assignature, Teacher, Hour, hourModel };
+
+    
