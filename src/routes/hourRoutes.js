@@ -18,13 +18,15 @@ router.put('/:faculty', middleware.authenticate, middleware.checkPermissions(["u
 router.del('/:faculty', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteFaculty);
 
 // Rutas para el control de un año
-router.get('/:faculty/:year', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getYears);
+router.get('/:faculty/all', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllYears);
+router.get('/:faculty/:year', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getYear);
 router.post('/:faculty/:year', middleware.authenticate, middleware.checkPermissions(["create"]), hourController.createYear);
 router.put('/:faculty:/year', middleware.authenticate, middleware.checkPermissions(["update"]), hourController.updateYear);
 router.del('/:faculty/:year', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteYear);
 
 // Rutas para el control de un grupo
-router.get('/:faculty/:year/:group', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getGroups);
+router.get('/:faculty/:year/all', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllGroups);
+router.get('/:faculty/:year/:group', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getGroup);
 router.post('/:faculty/:year/:group', middleware.authenticate, middleware.checkPermissions(["create"]), hourController.createGroup);
 router.put('/:faculty:/year/:group', middleware.authenticate, middleware.checkPermissions(["update"]), hourController.updateGroup);
 router.del('/:faculty/:year/:group', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteGroup);
