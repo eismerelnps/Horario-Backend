@@ -1,7 +1,6 @@
 // routes/productRoutes.js
 
 const express = require('express');
-//const { createHourValidators } = require('../validators/productValidators');
 const hourController = require('../controllers/hourController');
 const middleware = require('../middleware/middleware');
 
@@ -15,42 +14,42 @@ router.get('/all', middleware.authenticate, middleware.checkPermissions(["read"]
 router.get('/:faculty', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getFaculty);
 router.post('/:faculty', middleware.authenticate, middleware.checkPermissions(["create"]), hourController.createFaculty);
 router.put('/:faculty', middleware.authenticate, middleware.checkPermissions(["update"]), hourController.updateFaculty);
-router.del('/:faculty', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteFaculty);
+router.delete('/:faculty', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteFaculty);
 
 // Rutas para el control de un año
 router.get('/:faculty/all', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllYears);
 router.get('/:faculty/:year', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getYear);
 router.post('/:faculty/:year', middleware.authenticate, middleware.checkPermissions(["create"]), hourController.createYear);
 router.put('/:faculty:/year', middleware.authenticate, middleware.checkPermissions(["update"]), hourController.updateYear);
-router.del('/:faculty/:year', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteYear);
+router.delete('/:faculty/:year', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteYear);
 
 // Rutas para el control de un grupo
 router.get('/:faculty/:year/all', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllGroups);
 router.get('/:faculty/:year/:group', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getGroup);
 router.post('/:faculty/:year/:group', middleware.authenticate, middleware.checkPermissions(["create"]), hourController.createGroup);
 router.put('/:faculty:/year/:group', middleware.authenticate, middleware.checkPermissions(["update"]), hourController.updateGroup);
-router.del('/:faculty/:year/:group', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteGroup);
+router.delete('/:faculty/:year/:group', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteGroup);
 
 // Rutas para el control de una semana
 router.get('/:faculty/:year/:group/all', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllWeeks);
 router.get('/:faculty/:year/:group/:week', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getWeek);
 router.post('/:faculty/:year/:group/:week', middleware.authenticate, middleware.checkPermissions(["create"]), hourController.createWeek);
 router.put('/:faculty:/year/:group/:week', middleware.authenticate, middleware.checkPermissions(["update"]), hourController.updateWeek);
-router.del('/:faculty/:year/:group/:week', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteWeek);
+router.delete('/:faculty/:year/:group/:week', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteWeek);
 
 // Rutas para el control de un dia
 router.get('/:faculty/:year/:group/:week/all', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllSchedules);
 router.get('/:faculty/:year/:group/:week/:schedule', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getSchedule);
 router.post('/:faculty/:year/:group/:week/:schedule', middleware.authenticate, middleware.checkPermissions(["create"]), hourController.createSchedule);
 router.put('/:faculty:/year/:group/:week/:schedule', middleware.authenticate, middleware.checkPermissions(["update"]), hourController.updateSchedule);
-router.del('/:faculty/:year/:group/:week/:schedule', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteSchedule);
+router.delete('/:faculty/:year/:group/:week/:schedule', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteSchedule);
 
 // Rutas para el control de una clase
 router.get('/:faculty/:year/:group/:week/:schedule/all', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllClasses);
 router.get('/:faculty/:year/:group/:week/:schedule/:classe', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getClass);
 router.post('/:faculty/:year/:group/:week/:schedule/:classe', middleware.authenticate, middleware.checkPermissions(["create"]), hourController.createClass);
 router.put('/:faculty:/year/:group/:week/:schedule:/classe', middleware.authenticate, middleware.checkPermissions(["update"]), hourController.updateClass);
-router.del('/:faculty/:year/:group/:week/:schedule:/classe', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteClass);
+router.delete('/:faculty/:year/:group/:week/:schedule:/classe', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteClass);
 
 // Rutas para el control de un profesor
 router.get('/teachers/all', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHourModels);
@@ -80,4 +79,3 @@ router.delete('/hourModel/:model/:hour', middleware.authenticate, middleware.che
 
 
 module.exports = router;
-           
