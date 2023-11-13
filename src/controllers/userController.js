@@ -71,7 +71,7 @@ exports.login = async (req, res) => {
     // Verificar la contraseña
     const passwordMatch = await bcrypt.compare(password, findUser.password);
     if (!passwordMatch) {
-      return res.status(401).json({ message: 'usuario o contraseña incorrectos' });
+      return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
     }
 
     // Crear contenedor con los datos que seran enviados
