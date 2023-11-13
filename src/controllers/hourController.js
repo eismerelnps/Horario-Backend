@@ -42,7 +42,7 @@ function convertToNumber(value) {
   try {
     if (isNaN(value)) return {
       name: 'isNaN',
-      message: 'No se puede convertir texto no numérico!',
+      message: 'No se puede convertir un texto no numérico!',
       data: value,
     };
     return Number(value);
