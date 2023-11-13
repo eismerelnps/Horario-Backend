@@ -1,426 +1,209 @@
-// userController.js
-
-const User = require('../models/userModel');
-const ObjectId = require("mongoose").Types.ObjectId;
-
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const mongoose = require("mongoose");
 
 
+const classSchema = new mongoose.Schema({
+    id: {
+      type: Number,
+      unique: true,
+    },
+    assignature: {
+      type: Number,
+      required: [true, "Se requiere seleccionar una asignatura"],
+    },
+    teacher: Number,
+    room: String,
+    type: Number,
+});
 
-// Controlador para autenticar un usuario
-exports.createUser = async (req, res) => {
-  try {
-    const { username, password, email } = req.body;
+const scheduleSchema = new mongoose.Schema({
+  id: {
+      type: Number,
+      unique: true,
+  },
+  hourModel: Number,
+  classes: [classSchema],
+});
 
-    // Verifica si el usuario ya existe
-    const existingUser = await User.findOne({
-      $or: [{ username }, { email }]
+const weekSchema = new mongoose.Schema({
+  id: {
+      type: Number,
+      unique: true,
+    },
+  hourModel: Number,
+  days: [scheduleSchema],
+});
+
+const groupSchema = new mongoose.Schema({
+   id: {
+      type: Number,
+      unique: true,
+   },
+   name: {
+     type: String,
+     required: [true, "Se requiere un nombre del grupo"],
+   },
+   hourModel: Number,
+   schedule: [weekSchema],
+});
+
+const yearSchema = new mongoose.Schema({
+   id: {
+      type: Number,
+      unique: true,
+  },
+   hourModel: Number,
+   groups: [groupSchema],
+});
+
+const facultySchema = new mongoose.Schema({
+   name: {
+     type: String,
+     required: [true, "Se requiere el nombre de la facultad"]
+   },
+   code: String,
+   hourModel: Number,
+   years: [yearsSchema],
+});
+
+const assignatureSchema = new mongoose.Schema({
+   id: {
+      type: Number,
+      unique: true,
+   },
+   name: {
+     type: String,
+     requiered: [true, "Nombre de la asignatura requerida"],
+   },
+   abbr: String,
+});
+
+const teacherSchema = new mongoose.Schema({
+  id: {
+      type: Number,
+      unique: true,
+  },
+  name: {
+    type: String,
+    requiered: [true, "Nombre del profesor requerido"],
+  },
+  default_assignatures: [Number],
+});
+
+const hourSchema = new mongoose.Schema({
+  id: {
+      type: Number,
+      unique: true,
+    },
+  from: String,
+  to: String,
+});
+
+const hourModelSchema = new mongoose.Schema({
+  id: {
+      type: Number,
+      unique: true,
+    },
+  hours: [hourSchema],
+});
+
+const schoolSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    requiered: [true, "Nombre de la escuela obligatorio"],
+  },
+  hourModel: {
+    type: Number,
+    default: 0,
+  },
+  faculties: [facultySchema],
+  assignatures: [assignatureSchema],
+  teachers: [teacherSchema],
+  hourModels: [hourModelSchema],
+});
+
+
+const Class = mongoose.model("Class", classSchema);
+const Schedule = mongoose.model("Schedule", scheduleSchema);
+const Week = mongoose.model("Week", weekSchema);
+const Group = mongoose.model("Group", groupSchema);
+const Year = mongoose.model("YearsSchema", yearSchema);
+const Faculty = mongoose.model("Faculty", facultySchema);
+
+const Assignature = mongoose.model("Assignature", assignatureSchema);
+const Teacher = mongoose.model("Teacher", TeacherSchema);
+const Hour = mongoose.model("Hour", HourSchema);
+const HourModel = mongoose.model("HourModel", hourModelSchema);
+
+const School = mongoose.model("School", schoolSchema);
+
+
+const defaultHourModel = new HourModel({
+  id: 0,
+  hours: [
+   new Hour({id: 0, from: "8:00", to: "9:20"}),
+   new Hour({id: 1, from: "9:30", to: "10:50"}),
+   new Hour({id: 2, from: "11:00", to: "12:20"}),
+   new Hour({id: 3, from: "12:30", to: "13:50"}),
+   new Hour({id: 4, from: "14:00", to: "15:20"}),
+   new Hour({id: 5, from: "15:30", to: "16:50"}),
+  ],
+});
+
+Class.index({ id: 0 }, { unique: true });
+Schedule.index({ id: 0 }, { unique: true });
+Week.index({ id: 0 }, { unique: true });
+Group.index({ id: 0 }, { unique: true });
+Year.index({ id: 0 }, { unique: true });
+
+Assignature.index({ id: 0 }, { unique: true });
+Teacher.index({ id: 0 }, { unique: true });
+Hour.index({ id: 0 }, { unique: true });
+HourModel.index({ id: 0 }, { unique: true });
+
+
+const AutoIncrement = (Schema) => {
+  return () => {
+    let doc = this;
+    Schema.findOne({}, {}, function(err, schema) {
+        if (err) return next(err);
+        if (!schema) {
+          schema = new Schema();
+          schema.save(function(err) {
+            if (err) return next(err);
+            doc.id = schema.id;
+            next();
+          });
+        } else {
+          doc.id = schema.id;
+          schema.id += 1;
+          schema.save(function(err) {
+            if (err) return next(err);
+              next();
+            });
+        }
     });
-    
-    if (existingUser) {
-      return res.status(400).json({ message: 'El usuario y/o email ya existen' });
-    }
-
-    //Generar el hash de la contraseña
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Crea una nueva instancia del modelo User con los datos del usuario
-    var newUser = new User({ username, password: hashedPassword, email });
-
-    // Guarda el usuario en la base de datos
-    await newUser.save();
-    
-    // Crear contenedor con los datos que seran enviados
-    let user = {
-      username: newUser.username,
-      email: newUser.email,
-      faculty: newUser.faculty,
-      group: newUser.group,
-      year: newUser.year,
-      role: newUser.role,
-      token: '',
-    };
-
-    // Generar el token JWT
-    user.token = jwt.sign({ id: newUser._id.toString(), email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '30d' });
-    
-    // Enviar los datos en la respuesta
-    res.status(201).json({ message: 'Usuario creado exitosamente', user });
-  } catch (error) {
-    res.status(500).json({ message: 'Error al crear el usuario', error });
-  }
-};
-
-
-// Función para verificar las credenciales del usuario y generar un token JWT
-exports.login = async (req, res) => {
-  try {
-    const { identifier, password } = req.body;
-  
-    // Buscar al usuario o email  en la base de datos
-    const findUser = await User.findOne({
-      $or: [{ username: identifier }, { email: identifier }]
-    });
-      
-    if (!findUser) {
-      return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
-    }
-  
-    // Verificar la contraseña
-    const passwordMatch = await bcrypt.compare(password, findUser.password);
-    if (!passwordMatch) {
-      return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
-    }
-
-    // Crear contenedor con los datos que seran enviados
-    let user = {
-      username: findUser.username,
-      email: findUser.email,
-      faculty: findUser.faculty,
-      group: findUser.group,
-      year: findUser.year,
-      role: findUser.role,
-      token: '',
-    };
-
-    // Generar el token JWT
-    user.token = jwt.sign({ id: findUser._id.toString(), email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '30d' });
-
-    // Enviar los datos en la respuesta
-    res.status(200).json({ message: 'Usuario autenticado correctamente', user });
-  } catch (error) {
-    res.status(500).json({ message: 'Error al autenticar el usuario', error });
-  }
-};
-
-exports.check = async (req, res) => {
-  res.status(200).json({ message: 'Usuario autenticado correctamente' });
-};
-
-exports.update = async(req, res) => {
-  await updateUser(req, res);
-};
-
-exports.delete = async (req, res) => {
-  await deleteUser(req, res);
+  };
 }
 
-exports.adminUsers = async(req, res) => {
-  await getUsers(req, res);
-};
+Class.pre('save', AutoIncrement(Class));
+//Schedule.pre('save', AutoIncrement(Schedule));
+//Week.pre('save', AutoIncrement(Week));
+Group.pre('save', AutoIncrement(Group));
+//Year.pre('save', AutoIncrement(Year));
 
-exports.adminUser = async(req, res) => {
-  try {
-    const { targetId } = req.body;
+Assignature.pre('save', AutoIncrement(Assignature));
+Teacher.pre('save', AutoIncrement(Teacher));
+Hour.pre('save', AutoIncrement(Hour));
+HourModel.pre('save', AutoIncrement(HourModel));
 
-    const findUser = await User.findById(targetId);
-    
-    if (!findUser) {
-      throw {
-        name: 'InvalidIdError',
-        text: 'Id de usuario a actualizar incorrecto',
-        data: null
-      };
-    }
-    
-    // Guardar el id del usuario objetivo
-    req.user.targetId = targetId;
 
-    // Enviar datos a la función
-    await getUsers(req, res);
-
-  } catch(error) {
-    res.status(500).json({ message: 'Id de usuario a obtener incorrecto', error });
-  } 
-};
-
-exports.adminUpdate = async (req, res) => {
-  try {
-    const { targetId } = req.body;
-
-    const findUser = await User.findById(targetId);
-    
-    if (!findUser) {
-      throw {
-        name: 'InvalidIdError',
-        text: 'Id de usuario a actualizar incorrecto',
-        data: null
-      };
-    }
-
-    // Guardar el id del usuario objetivo
-    req.user.targetId = targetId;
-
-    // Enviar datos a la función
-    await updateUser(req, res);
-
-  } catch(error) {
-    res.status(500).json({ message: 'Id de usuario a actualizar incorrecto', error });
-  } 
-};
-
-exports.adminDelete = async (req, res) => {
-  try {
-    const { targetId } = req.body;
-
-    const findUser = await User.findById(targetId);
-    
-    if (!findUser) {
-      throw {
-        name: 'InvalidIdError',
-        text: 'Id de usuario a actualizar incorrecto',
-        data: null
-      };
-    }
-
-    // Guardar el id del usuario objetivo
-    req.user.targetId = targetId;
-
-    // Enviar datos a la función
-    await deleteUser(req, res);
-
-  } catch(error) {
-    res.status(500).json({ message: 'Id de usuario a actualizar incorrecto', error });
+(async () => {
+  if (!(await HourModel.findOne({}))) {
+    await HourModel.create(defaultHourModel);
   }
-};
+})();
 
 
+module.exports = { School, Faculty, Year, Group, Week, Schedule, Class, Assignature, Teacher, Hour, hourModel };
 
-/**  FUNCIONES MULTIUSOS  **/
-
-// Función para obtener los datos de uno o todos los usuarios
-async function getUsers(req, res) {
-  try {
-    const { password } = req.body;
-    
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({ message: 'Acceso no autorizado' });
-    }
   
-    let findUser = await User.findById(req.user.id);
-    
-    if (!findUser) {
-      return res.status(401).json({ message: 'usuario o contraseña incorrectos' });
-    }
-  
-    // Verificar la contraseña
-    const passwordMatch = await bcrypt.compare(password, findUser.password);
-    if (!passwordMatch) {
-      return res.status(401).json({ message: 'usuario o contraseña incorrectos' });
-    }
-
-    if(req.user.targetId) {
-      // Guarda los datos del usuario en el id objetivo
-      result = await User.findById(req.user.targetId);
-    }
-    else {
-      // Guarda la lista de datos de los usuarios
-      result = await User.find();
-    }
-
-    // Comprueba que los datos se hayan recibido correctamente
-    if(!result) {
-      throw {
-        name: 'UsersGetError',
-        text: 'Error al obtener los datos de los usuarios',
-        data: result
-      };
-    }
-
-    // Retorna los datos de los usuarios 
-    res.status(200).json({ message: 'Datos obtenidos correctamente', result});
-  } catch (error) {
-    res.status(500).json({ message: 'Error al listar los datos', error });
-  }
-}
-
-// Función para actualizar un usuario 
-async function updateUser(req, res) {
-  try {
-    const { username, password, new_password, email, faculty, group, year, role } = req.body;
-   
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({ message: 'Acceso no autorizado' });
-    }
-     
-    let findUser = await User.findById(req.user.id);
-
-    if (!findUser) {
-      return res.status(401).json({ message: 'Acceso denegado' });
-    }
-
-    // Verificar la contraseña
-    let passwordMatch = await bcrypt.compare(password, findUser.password);
-    if (!passwordMatch) {
-      return res.status(401).json({ message: 'contraseña incorrecta' });
-    }
-
-    // Si hay un objeto, Guarda los datos del usuario 
-    if(req.user.targetId) findUser = await User.findById(req.user.targetId);
-    
-    // Crea variable vacia para guardar los datos a ser actualizados
-    let data = { };
- 
-    // Guarda los datos si hay cambios
-    if (username && username.trim() !== '' && username != findUser.username) data.username = username;
-    if (email && email.trim() !== '' && email != findUser.email) data.email = email;
-    if (new_password && new_password.trim() !== '' && new_password != password) data.password = new_password;
-    if (faculty && faculty != findUser.faculty) data.faculty = faculty;
-    if (group && group != findUser.group) data.group = group;
-    if (year && year != findUser.year) data.year = year;
-    if(req.user.targetId && role && role.trim() !== '' && role != findUser.role) data.role = role;
-    
-    if(data.password) {
-      if(data.password.length === 0) {
-        delete data.password;
-      }
-      else if(data.password.length < 7) {
-        throw {
-          name: 'InvalidNewPasswordError',
-          text: 'contraseña muy corta',
-          data: data,
-        };
-      }
-      else {
-        // Generar el hash de la contraseña
-        data.password = await bcrypt.hash(data.password, 10);
-      }
-    }
-    
-    // Comprueba que no hallan cambios en la actualización
-    if(Object.keys(data).length === 0) {
-      throw {
-        name: 'UserNotChangesError',
-        text: 'No se encontraron cambios en los datos a actualizar ',
-        data: data,
-      };
-    }
-
-    // Comprobar si ya existe el usuario y/o el email ( son de tipo unico )
-    if(data.username && data.email) {
-      findUser = await User.findOne({
-        $or: [{ username: data.username }, { email: data.email }]
-      });
-    }
-    else if(data.username) {
-      findUser = await User.findOne({ username: data.username });
-    }
-    else if(data.email) {
-      findUser = await User.findOne({ email: data.email });
-    }
-    else {
-      findUser = null;
-    }
-
-    // Si existe alguna coincidencia envia el error
-    if(findUser) {
-      throw {
-        name: 'UserUpdateError',
-        text: 'El nombre de usuario o el email estan en uso',
-        data: data,
-      };
-    }
-
-    // Actualizar los datos en la base de datos
-    let updateUser = null;
-
-    if(req.user.targetId) updateUser = await User.updateMany({ _id: new ObjectId(req.user.targetId) }, { $set: data });
-    else updateUser = await User.updateMany({ _id: new ObjectId(req.user.id) }, { $set: data });
-
-    // Si no hay ningun cambio en los datos en la base de datos envia un error
-    if(updateUser.nModified === 0) {
-      throw {
-        name: 'UserUpdateError',
-        text: 'No se pudieron actualizar los datos',
-        data: data,
-      };
-    }
-
-    // Obtiene el elemento de nuevo (ya actualizado)
-    if(req.user.targetId) findUser = await User.findById(req.user.targetId);
-    else findUser = await User.findById(req.user.id);
-
-    // Pruueba que exista
-    if (!findUser) {
-      throw {
-        name: 'UserUpdateError',
-        text: 'No se pudieron comprobar los datos actualizados',
-        data: data,
-      };
-    }
-
-    let user = null;
-    
-    if(req.user.targetId) {
-      user = findUser;
-    }
-    else {
-      // Crear contenedor con los datos que seran enviados
-      user = {
-        username: findUser.username,
-        email: findUser.email,
-        faculty: findUser.faculty,
-        group: findUser.group,
-        year: findUser.year,
-        role: findUser.role,
-        token: ''
-      };
-     
-      // Si no hay un id objetivo, Generar el token JWT
-      user.token = jwt.sign({ id: req.user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '30d' });
-   }
-    
-    
-    // Enviar los datos en la respuesta
-    res.status(200).json({ message: 'Usuario actualizado correctamente', user });
-  } catch (error) {
-    if(error.text) res.status(500).json({ message: error.text, error });
-    else res.status(500).json({ message: 'Error al actualizar los datos del usuario', error });
-  }
-};
-
-// Función para eliminar a un usuario
-async function deleteUser(req, res) {
-  try {
-    const { password } = req.body;
-
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({ message: 'Acceso no autorizado' });
-    }
-  
-    let findUser = await User.findById(req.user.id);
-    
-    if (!findUser) {
-      return res.status(401).json({ message: 'usuario o contraseña incorrectos' });
-    }
-  
-    // Verificar la contraseña
-    const passwordMatch = await bcrypt.compare(password, findUser.password);
-    if (!passwordMatch) {
-      return res.status(401).json({ message: 'usuario o contraseña incorrectos' });
-    }
-
-    // Eliminar usuario
-    let deleteUser = null;
-
-    if(req.user.targetId) deleteUser = await User.findByIdAndDelete(req.user.targetId);
-    else deleteUser = await User.findByIdAndDelete(req.user.id);
-    
-    if(!deleteUser) {
-      throw {
-        name: 'ErrorUserDelete',
-        text: 'Error al eliminar el usuario',
-        data: null,
-      }
-    }
-      
-    // Enviar los datos en la respuesta
-    res.status(200).json({ message: 'Usuario eliminado correctamente', deleted: true });
-  } catch (error) {
-    res.status(500).json({ message: 'Error al eliminar el usuario', error });
-  }
-};
-
-
