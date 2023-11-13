@@ -65,7 +65,7 @@ exports.login = async (req, res) => {
     });
       
     if (!findUser) {
-      return res.status(401).json({ message: 'usuario o contraseña incorrectos' });
+      return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
     }
   
     // Verificar la contraseña
