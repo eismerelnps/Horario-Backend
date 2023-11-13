@@ -1,7 +1,7 @@
 // controllers/productController.js
 
 const logger = require('../logs/logger');
-const Hour = require('../models/schoolModel');
+const { Faculty } = require('../models/schoolModel');
 
 const ObjectId = require("mongoose").Types.ObjectId;
 
