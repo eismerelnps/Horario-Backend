@@ -75,7 +75,15 @@ router.delete('/hourModel/:model/:hour', middleware.authenticate, middleware.che
 
 /**  OTROS MÉTODOS  **/
 
-// Segun se necesiten
+router.get('/faculties/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromSchool);
+router.get('/:faculty/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromFaculty);
+router.get('/:faculty/years/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromYears);
+router.get('/:faculty/:year/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromYear);
+router.get('/:faculty/:year/groups/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromGroups);
+router.get('/:faculty/:year/:group/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromGroup);
+router.get('/:faculty/:year/:group/weeks/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromWeeks);
+router.get('/:faculty/:year/:group/:week/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromWeek);
+
 
 
 module.exports = router;
