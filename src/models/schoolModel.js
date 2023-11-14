@@ -138,7 +138,7 @@ const schoolSchema = new mongoose.Schema({
   faculties: [facultySchema],
   assignatures: [assignatureSchema],
   teachers: [teacherSchema],
-  hourModels: hourModelSchema,
+  hourModels: [hourModelSchema],
 });
 
 
