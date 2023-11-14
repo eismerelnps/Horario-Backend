@@ -2,8 +2,6 @@ const mongoose = require("mongoose");
 // const autoIncrement = require('mongoose-sequence')(mongoose);
 
 
-
-
 const classSchema = new mongoose.Schema({
     id: {
       type: Number,
@@ -36,7 +34,7 @@ const weekSchema = new mongoose.Schema({
       required: true,
     },
   hourModel: Number,
-  days: [scheduleSchema],
+  schedules: [scheduleSchema],
 });
 
 const groupSchema = new mongoose.Schema({
@@ -50,7 +48,7 @@ const groupSchema = new mongoose.Schema({
      required: [true, "Se requiere un nombre del grupo"],
    },
    hourModel: Number,
-   schedule: [weekSchema],
+   weeks: [weekSchema],
 });
 
 const yearSchema = new mongoose.Schema({
@@ -64,6 +62,11 @@ const yearSchema = new mongoose.Schema({
 });
 
 const facultySchema = new mongoose.Schema({
+   id: {
+      type: Number,
+      unique: true,
+      required: true,
+  },
    name: {
      type: String,
      required: [true, "Se requiere el nombre de la facultad"],
@@ -113,11 +116,17 @@ const hourModelSchema = new mongoose.Schema({
   id: {
       type: Number,
       unique: true,
+      required: true,
     },
   hours: [hourSchema],
 });
 
 const schoolSchema = new mongoose.Schema({
+  id: {
+      type: Number,
+      unique: true,
+      required: true,
+  },
   name: {
     type: String,
     requiered: [true, "Nombre de la escuela obligatorio"],
@@ -129,7 +138,7 @@ const schoolSchema = new mongoose.Schema({
   faculties: [facultySchema],
   assignatures: [assignatureSchema],
   teachers: [teacherSchema],
-  hourModels: [hourModelSchema],
+  hourModels: hourModelSchema,
 });
 
 
@@ -149,8 +158,21 @@ const School = mongoose.model("School", schoolSchema);
 
 
 (async () => {
-  if (!(await HourModel.findOne({}))) {
-    await HourModel.create(new HourModel({
+  try {
+  var find = School.findOne({ id: 0 });
+
+  if(!find) {
+    await School.create(new School({
+      id: 0,
+      name: "University",
+    }));
+    console.log("La Universidad por defecto ha sido creada");
+  } else console.log("La Universidad por defecto ya existe!");
+
+   //  find.hourModels = HourModel; // No es lo adecuado
+
+   if (!(await find.hourModels.findOne({}))) {
+    await find.hourModels.create(new HourModel({
       id: 0,
       hours: [
         new Hour({id: 0, from: "8:00", to: "9:20"}),
@@ -162,11 +184,16 @@ const School = mongoose.model("School", schoolSchema);
      ],
   }));
   console.log("El Modelo de Horario 0 ha sido creado correctamente!")
-  }
-  else {
+  } else {
     console.log("El Modelo de Horario 0 ya ha sido creado!")
   }
+} catch (e) {
+ console.log(e) 
+ process.exit(1)
+}
 })();
+
+
 
 
 module.exports = { School, Faculty, Year, Group, Week, Schedule, Class, Assignature, Teacher, Hour, HourModel };
