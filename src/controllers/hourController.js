@@ -7,7 +7,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
 
 /**  FUNCIONES BASICAS  **/
 
-exports.getFormAll = async (req, res) => {
+exports.getFromAll = async (req, res) => {
   try {
     const { faculty, year, group, week, schedule, sclass } = req.params;
     
