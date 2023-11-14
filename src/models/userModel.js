@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require('bcryptjs');
 
 // Definición del esquema de usuario
 const userSchema = new mongoose.Schema({
@@ -31,10 +32,32 @@ const userSchema = new mongoose.Schema({
   group: {
     type: Number,
     default: 0,
+  },
+  school: {
+    type: Number,
+    default: 0,
+  },
+  activated: {
+    type: Boolean,
+    default: true, // En futuras versiones
   }
 });
 
 // Creación del modelo User basado en el esquema
 const User = mongoose.model("User", userSchema);
+
+
+(async()=>{
+  if(!(await User.findOne({}))) {
+     await User.create(new User({
+        username: 'admin',
+        email: 'admin@admin',
+        password: await bcrypt.hash("admin", 10),
+        role: 'superadmin',
+        activated: true,
+     }));
+  }
+})();
+
 
 module.exports = User;
