@@ -14,17 +14,15 @@ exports.authenticate = (req, res, next) => {
       if (err) {
         return res.status(401).json({ message: 'Token inválido' });
       }
-  
+
       // Agregar la información del usuario autenticado al objeto `req`
       req.user = decoded;
       next();
     });
   };
-  
+
   // Middleware para verificar los permisos de un usuario
 exports.checkPermissions = (requiredPermissions) => {
-    
-   
     
     return (req, res, next) => {
       const  {role}  = req.user;
@@ -54,4 +52,4 @@ function roleHasPermission(role, permission) {
       }
       
     
-  }
+}
