@@ -81,7 +81,7 @@ router.get('/:faculty/years/all-hours', middleware.authenticate, middleware.chec
 router.get('/:faculty/:year/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromYear);
 router.get('/:faculty/:year/groups/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromGroups);
 router.get('/:faculty/:year/:group/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromGroup);
-router.get('/:faculty/:year/:groups/weeks/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromWeeks);
+router.get('/:faculty/:year/:group/weeks/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromWeeks);
 router.get('/:faculty/:year/:group/:week/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromWeek);
 
 
