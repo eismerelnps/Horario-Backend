@@ -75,7 +75,7 @@ router.delete('/hourModel/:model/:hour', middleware.authenticate, middleware.che
 
 /**  OTROS MÉTODOS  **/
 
-router.get('/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromSchool);
+router.get('/faculties/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromSchool);
 router.get('/:faculty/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromFaculty);
 router.get('/:faculty/years/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromYears);
 router.get('/:faculty/:year/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getAllHoursFromYear);
