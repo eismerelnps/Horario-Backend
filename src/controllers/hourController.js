@@ -84,6 +84,7 @@ exports.getFromTeachers = async (req, res) => {
     const find = School.findOne({ id: req.user.school });
     if (!find) throw { code: 2, name: ' la Escuela', id: req.user.school };
 
+    // Profesor
     if(find.teachers || find.teachers.length === 0) throw { code: 3 };
     if (faculty == 'all') return res.status(200).send({ message: 'Datos obtenidos correctamente', data: find.teachers });
     let id = convertToNumber(teacher);
@@ -107,6 +108,7 @@ exports.getFromHourModels = async (req, res) => {
     const find = School.findOne({ id: req.user.school });
     if (!find) throw { code: 2, name: ' la Escuela', id: req.user.school };
 
+    // Modelo de Horario 
     if(find.hourModels || find.hourModels.length === 0) throw { code: 3 };
     if (model == 'all') return res.status(200).send({ message: 'Datos obtenidos correctamente', data: find.hourModels });
     let id = convertToNumber(model);
@@ -114,7 +116,8 @@ exports.getFromHourModels = async (req, res) => {
     let elm = find.hourModels.findIndex(e => e.id === id);
     if (elm < 0) throw { code: 2, name: ' el modelo de horario', id };
     return res.status(200).send({ message: 'Datos obtenidos correctamente', data: find.hourModels[elm] });
-   
+
+    // Horario de Turno
     if(find.hourModels[elm].hours || find.hourModels[elm].hours.length === 0) throw { code: 3 };
     if (model == 'all') return res.status(200).send({ message: 'Datos obtenidos correctamente', data: find.hourModels[elm].hours });
     let id = convertToNumber(hour);
