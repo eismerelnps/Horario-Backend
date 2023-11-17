@@ -9,6 +9,13 @@ const router = express.Router();
 
 /**  MÉTODOS PRINCIPALES  **/
 
+/**
+ * Nota: get(../:id)  id => :
+ *  > 'all' return all of Type
+ *  > 'hours' return all parsed hours of type
+ ***/
+
+
 // Rutas para el control de una Facultad
 router.get('/:faculty', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getFromAll);
 //router.post('/:faculty', middleware.authenticate, middleware.checkPermissions(["create"]), hourController.createFaculty);
@@ -48,38 +55,23 @@ router.get('/:faculty/:year/:group/:week/:schedule/:sclass', middleware.authenti
 //router.delete('/:faculty/:year/:group/:week/:schedule:/classe', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteClass);
 
 // Rutas para el control de un profesor
-//router.get('/teacher/:teacher', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getTeacher);
+router.get('/teachers/:teacher', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getFromTeachers);
 //router.post('/teacher/:teacher', middleware.authenticate, middleware.checkPermissions(["create"]), hourController.createTeacher);
 //router.put('/teacher/:teacher', middleware.authenticate, middleware.checkPermissions(["update"]), hourController.updateTeacher);
 //router.delete('/teacher/:teacher', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteTeacher);
 
 // Rutas para el control de un modelo de horario
-//router.get('/hourModel/:model', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getHourModel);
+router.get('/hourModel/:model', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getFromHourModels);
 //router.post('/hourModel/:model', middleware.authenticate, middleware.checkPermissions(["create"]), hourController.createHourModel);
 //router.put('/hourModel/:model', middleware.authenticate, middleware.checkPermissions(["update"]), hourController.updateHourModel);
 //router.delete('/hourModel/:model', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteHourModel);
 
 // Rutas para el control de un turno
-//router.get('/hourModel/:model/:hour', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getHourModelHour);
+router.get('/hourModel/:model/:hour', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getFromHourModels);
 //router.post('/hourModel/:model/:hour', middleware.authenticate, middleware.checkPermissions(["create"]), hourController.createHourModelHour);
 //router.put('/hourModel/:mode:/hour', middleware.authenticate, middleware.checkPermissions(["update"]), hourController.updateHourModelHour);
 //router.delete('/hourModel/:model/:hour', middleware.authenticate, middleware.checkPermissions(["delete"]), hourController.deleteHourModelHour);
 
 
 
-/**  OTROS MÉTODOS  **/
-
-/*
-router.get('/faculties/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getFromAll);
-router.get('/:faculty/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getFromAll);
-router.get('/:faculty/years/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getFromAll);
-router.get('/:faculty/:year/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getFromAll);
-router.get('/:faculty/:year/groups/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getFromAll);
-router.get('/:faculty/:year/:group/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getFromAll);
-router.get('/:faculty/:year/:group/weeks/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getFromAll);
-router.get('/:faculty/:year/:group/:week/all-hours', middleware.authenticate, middleware.checkPermissions(["read"]), hourController.getFromAll);
-*/
-
-
 module.exports = router;
-
